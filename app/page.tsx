@@ -5,6 +5,7 @@ import { Upload, Sparkles, MessageCircle, Zap } from 'lucide-react'
 import ImageUploader from '@/components/ImageUploader'
 import ResponseGenerator from '@/components/ResponseGenerator'
 import ToneSelector from '@/components/ToneSelector'
+import Header from '@/components/Header'
 
 export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
@@ -14,22 +15,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-8 h-8 text-pink-500" />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
-                RizzGPT
-              </h1>
-            </div>
-            <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
-              Sign In
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -57,7 +43,7 @@ export default function Home() {
           <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
             <MessageCircle className="w-12 h-12 text-blue-500 mb-4" />
             <h3 className="text-lg font-semibold mb-2">Get Multiple Options</h3>
-            <p className="text-gray-600">Receive 3-5 AI-generated responses to choose from</p>
+            <p className="text-gray-600">Receive 4 AI-generated responses to choose from</p>
           </div>
         </div>
 
