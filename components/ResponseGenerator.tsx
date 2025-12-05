@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Sparkles, Copy, RefreshCw, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/lib/auth-context'
+import { supabase } from '@/lib/supabase'
 
 interface ResponseGeneratorProps {
   chatContext: string
@@ -25,6 +27,7 @@ export default function ResponseGenerator({
 }: ResponseGeneratorProps) {
   const [responses, setResponses] = useState<Response[]>([])
   const [copiedId, setCopiedId] = useState<number | null>(null)
+  const { user } = useAuth()
 
   const generateResponses = async () => {
     setIsGenerating(true)
@@ -47,6 +50,11 @@ export default function ResponseGenerator({
       if (data.success) {
         setResponses(data.responses)
         toast.success('Responses generated!')
+
+        // Save to database if user is logged in
+        if (user) {
+          await saveConversation(data.responses)
+        }
       } else {
         toast.error('Failed to generate responses')
       }
@@ -55,6 +63,41 @@ export default function ResponseGenerator({
       toast.error('Error generating responses')
     } finally {
       setIsGenerating(false)
+    }
+  }
+
+  const saveConversation = async (generatedResponses: Response[]) => {
+    try {
+      // Insert conversation
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          user_id: user!.id,
+          chat_context: chatContext,
+          tone: tone,
+        })
+        .select()
+        .single()
+
+      if (convError) throw convError
+
+      // Insert responses
+      const responsesToInsert = generatedResponses.map(resp => ({
+        conversation_id: conversation.id,
+        response_text: resp.text,
+        is_favorite: false,
+      }))
+
+      const { error: respError } = await supabase
+        .from('responses')
+        .insert(responsesToInsert)
+
+      if (respError) throw respError
+
+      console.log('Conversation saved successfully')
+    } catch (error) {
+      console.error('Error saving conversation:', error)
+      // Don't show error to user - saving is optional
     }
   }
 
